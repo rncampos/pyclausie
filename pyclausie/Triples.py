@@ -32,6 +32,7 @@ class Corpus(list):
     #def as_tsv(self):
     @classmethod
     def from_tsv(this_class, stream, print_sent_confidence):
+
         try:
             stream = iter(stream)
             corpus = this_class()
