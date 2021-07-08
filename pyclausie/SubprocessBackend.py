@@ -12,6 +12,7 @@
 
 import os
 import subprocess
+import io
 import tempfile
 from .ClausIE import ClausIE
 from .Triples import Corpus
@@ -41,14 +42,14 @@ class SubprocessBackend(ClausIE):
             Note: sentences and ids must be a list even if you only
                   extract triples for one sentence.
         """
-        input_file = tempfile.NamedTemporaryFile(delete=False)
+        input_file = tempfile.NamedTemporaryFile(delete=False, mode="w+t")
         try:
             if ids is not None:
                 for identifier, sentence in zip(ids, sentences):
-                    input_file.write('{0!r}\t{1!r}\n'.format(identifier, sentence).encode('utf8'))
+                    input_file.writelines(f'{identifier!r}\t{sentence!r}\n')
             else:
                 for sentence in sentences:
-                    input_file.write('{0!r}\n'.format(sentence).encode('utf8'))
+                    input_file.writelines(f'{sentence!r}\n')
             input_file.flush()
 
             command = [self.java_command,
@@ -59,14 +60,13 @@ class SubprocessBackend(ClausIE):
             if print_sent_confidence:
                 command.append('-p')
             sd_process = subprocess.Popen(command, stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE)
+                                          stderr=subprocess.PIPE, shell=True, universal_newlines=True)
+            stdout, stderr = sd_process.communicate()
             return_code = sd_process.wait()
-            stderr = sd_process.stderr.read()
-            stdout = sd_process.stdout.read()
             self._raise_on_bad_exitcode(return_code, stderr)
         finally:
-            os.remove(input_file.name)
-        
+            input_file.close()
+
         triples = Corpus.from_tsv(stdout.splitlines(), print_sent_confidence)
         return triples
 

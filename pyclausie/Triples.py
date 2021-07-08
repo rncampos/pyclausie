@@ -32,17 +32,20 @@ class Corpus(list):
     #def as_tsv(self):
     @classmethod
     def from_tsv(this_class, stream, print_sent_confidence):
-        stream = iter(stream)
-        corpus = this_class()
-        for line in stream:
-            if not print_sent_confidence:
-                (ident, subj, pred, obj) = line.decode().split('\t')
-                triple = Triple(ident, subj.strip('"'), pred.strip('"'),
-                                obj.strip('"'), None)
-                corpus.append(triple)
-            else:
-                (ident, subj, pred, obj, conf) = line.decode().split('\t')
-                triple = Triple(ident, subj.strip('"'), pred.strip('"'),
-                                obj.strip('"'), conf.strip('"'))
-                corpus.append(triple)
+        try:
+            stream = iter(stream)
+            corpus = this_class()
+            for line in stream:
+                if not print_sent_confidence:
+                    (ident, subj, pred, obj) = line.split('\t')
+                    triple = Triple(ident, subj.strip('"'), pred.strip('"'),
+                                    obj.strip('"'), None)
+                    corpus.append(triple)
+                else:
+                    (ident, subj, pred, obj, conf) = line.split('\t')
+                    triple = Triple(ident, subj.strip('"'), pred.strip('"'),
+                                    obj.strip('"'), conf.strip('"'))
+                    corpus.append(triple)
+        except:
+            corpus = None
         return corpus
