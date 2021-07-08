@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='pyclausie',
-      version='0.1',
+      version='0.2',
       description='Python wrapper around ClausIE (http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/software/clausie/)',
       long_description=readme(),
       url='https://github.com/AnthonyMRios/pyclausie',
