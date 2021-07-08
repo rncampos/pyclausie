@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def readme():
     with open('README.rst') as f:
@@ -17,5 +17,5 @@ setup(name='pyclausie',
           'Natural Language :: English'
       ],
       license='Apache 2.0',
-      packages=['pyclausie'],
-      zip_safe=False)
+      packages=find_packages()
+      )
